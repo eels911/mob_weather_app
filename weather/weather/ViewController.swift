@@ -8,10 +8,14 @@
 
 import UIKit
 import CoreLocation
-import SwiftyJSON
+
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var cityNameLable: UILabel!
+    @IBOutlet weak var weatherDescriptionLabel: UILabel!
+    @IBOutlet weak var tempLabel: UILabel!
+    @IBOutlet weak var weatherIconImage: UIImageView!
     let locationManager = CLLocationManager()
     var weatherData = WeatherData()
     
@@ -20,6 +24,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         startLocationManager()
+    }
+    func updateView() {
+        cityNameLable.text = weatherData.name
+        weatherDescriptionLabel.text = DataSource.weatherIDs[weatherData.weather[0].id]
+        tempLabel.text = weatherData.main.temp.description + "C"
+        weatherIconImage.image = UIImage(named: weatherData.weather[0].icon)
     }
     
 //    получение информации о погоде по широте и долготе
@@ -35,8 +45,11 @@ class ViewController: UIViewController {
                 return
             }
             do {
-                self.weatherData = try JSON().decode(WeatherData.self,from: data!)
+                self.weatherData = try JSONDecoder().decode(WeatherData.self,from: data!)
                 print(self.weatherData)
+                DispatchQueue.main.async{
+                    self.updateView()
+                }
             } catch {
                 print(error.localizedDescription)
             }
@@ -44,6 +57,8 @@ class ViewController: UIViewController {
         task.resume()
                 
     }
+    
+
     
     func startLocationManager(){
 //        зпрос при первом запуске
@@ -64,6 +79,7 @@ extension ViewController: CLLocationManagerDelegate {
     [CLLocation]) {
 //         получаем местоположение
         if let lastLocation = locations.last{
+            updateWeatherInfo(latitude: lastLocation.coordinate.latitude, longtitude: lastLocation.coordinate.longitude)
             print(lastLocation.coordinate.latitude,lastLocation.coordinate.longitude)
         }
     }

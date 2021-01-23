@@ -17,11 +17,11 @@ struct Weather: Codable {
 
 struct Main: Codable {
     var temp: Double = 0.0
-    var humadity: Int = 0
-    var preasuare: Int = 0
+    var humidity: Int = 0
+    var pressure: Int = 0
 }
 
-struct WeatherData: Codable{
+struct WeatherData: Codable {
     var weather: [Weather] = []
     var main: Main = Main()
     var name: String = ""
