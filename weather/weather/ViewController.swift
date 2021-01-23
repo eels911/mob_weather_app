@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import SwiftyJSON
 
 class ViewController: UIViewController {
     
@@ -26,7 +27,7 @@ class ViewController: UIViewController {
         let session = URLSession.shared
         
         
-        let url = URL(string: "api.openweathermap.org/data/2.5/weather?lat=\(latitude.description)&lon=\(longtitude.description)&appid=fa7f0a03b2f57a44c99e644a7dca1dc9&lang=ru&units=metric")!
+        let url = URL(string: "http://api.openweathermap.org/data/2.5/weather?lat=\(latitude.description)&lon=\(longtitude.description)&appid=fa7f0a03b2f57a44c99e644a7dca1dc9&lang=ru&units=metric")!
         
         let task = session.dataTask(with: url){(data,response,error) in
             guard error == nil else {
@@ -34,12 +35,14 @@ class ViewController: UIViewController {
                 return
             }
             do {
-                
+                self.weatherData = try JSON().decode(WeatherData.self,from: data!)
+                print(self.weatherData)
             } catch {
                 print(error.localizedDescription)
             }
         }
-        
+        task.resume()
+                
     }
     
     func startLocationManager(){
